@@ -41,9 +41,10 @@ public class User implements UserDetails {
         return password;
     }
 
+    // I return email here AS EMAIL IS UNIQUE!
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override
