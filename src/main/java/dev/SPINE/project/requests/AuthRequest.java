@@ -1,4 +1,4 @@
-package dev.SPINE.project.auth;
+package dev.SPINE.project.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequest {
-    private String username;
-    private String password;
+@NoArgsConstructor
+public class AuthRequest {
     private String email;
+    private String password;
 }

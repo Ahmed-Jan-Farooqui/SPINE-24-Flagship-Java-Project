@@ -1,8 +1,8 @@
 package dev.SPINE.project.controllers;
 
-import dev.SPINE.project.auth.AuthRequest;
-import dev.SPINE.project.auth.AuthResponse;
-import dev.SPINE.project.auth.SignupRequest;
+import dev.SPINE.project.requests.AuthRequest;
+import dev.SPINE.project.responses.AuthResponse;
+import dev.SPINE.project.requests.SignupRequest;
 import dev.SPINE.project.auth.SignupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

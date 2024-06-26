@@ -1,6 +1,9 @@
 package dev.SPINE.project.auth;
 
 import dev.SPINE.project.config.JWTService;
+import dev.SPINE.project.requests.AuthRequest;
+import dev.SPINE.project.responses.AuthResponse;
+import dev.SPINE.project.requests.SignupRequest;
 import dev.SPINE.project.user.User;
 import dev.SPINE.project.user.UserRepository;
 import lombok.RequiredArgsConstructor;

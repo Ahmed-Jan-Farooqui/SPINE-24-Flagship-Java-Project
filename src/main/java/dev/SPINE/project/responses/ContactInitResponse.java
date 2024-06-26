@@ -1,4 +1,5 @@
-package dev.SPINE.project.auth;
+package dev.SPINE.project.responses;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-    private String token;
+public class ContactInitResponse {
+    private Integer id;
 }

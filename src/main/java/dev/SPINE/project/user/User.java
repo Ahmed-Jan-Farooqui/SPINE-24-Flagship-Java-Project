@@ -1,20 +1,18 @@
 package dev.SPINE.project.user;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.SPINE.project.contact.Contact;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Builder
 @NoArgsConstructor
@@ -23,12 +21,17 @@ import java.util.List;
 @Table(name = "_user")
 public class User implements UserDetails {
 
+    @Getter
     @Id
     @GeneratedValue
     private Integer id;
     private String username;
     private String email;
     private String password;
+    @Getter
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contact> contacts;
     private static final String role = "ROLE_USER";
 
     @Override
@@ -66,4 +69,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
