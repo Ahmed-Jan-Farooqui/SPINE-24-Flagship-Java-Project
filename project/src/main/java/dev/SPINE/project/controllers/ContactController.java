@@ -3,6 +3,7 @@ package dev.SPINE.project.controllers;
 import dev.SPINE.project.requests.ContactDeleteRequest;
 import dev.SPINE.project.requests.ContactInitRequest;
 import dev.SPINE.project.contact.ContactService;
+import dev.SPINE.project.requests.ContactUpdateRequest;
 import dev.SPINE.project.responses.ContactInitResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,13 @@ public class ContactController {
         var response = contactService.delete(request);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateContact(@RequestBody ContactUpdateRequest request){
+        System.out.println("Received request on Delete Contact");
+        var response = contactService.update(request);
+        return ResponseEntity.ok(response);
+    }
+
+
 }

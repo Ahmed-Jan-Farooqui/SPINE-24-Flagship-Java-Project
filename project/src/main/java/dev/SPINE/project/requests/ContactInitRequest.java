@@ -1,6 +1,7 @@
 package dev.SPINE.project.requests;
 
 import dev.SPINE.project.contact.Email;
+import dev.SPINE.project.contact.Phone;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class ContactInitRequest {
     private String firstName;
     private String lastName;
     private List<Email> emails;
+    private List<Phone> phones;
 }

@@ -11,8 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "contact_emails")
-public class ContactEmail {
+@Table(name = "contact_phones")
+public class ContactPhones {
     @Id
     @GeneratedValue
     private Integer id;
@@ -20,6 +20,6 @@ public class ContactEmail {
     @ManyToOne
     @JoinColumn(name="contactId", referencedColumnName = "id", nullable = false)
     private Contact contact;
-    private String email;
+    private String number;
     private String label;
 }

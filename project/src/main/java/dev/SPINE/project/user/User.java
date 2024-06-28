@@ -27,9 +27,9 @@ public class User implements UserDetails {
     private Integer id;
     private String username;
     private String email;
+    @JsonIgnore
     private String password;
     @Getter
-    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contact> contacts;
     private static final String role = "ROLE_USER";

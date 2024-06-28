@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Integer> {
-    public List<Contact> findAllByUserId(Integer userId);
+    List<Contact> findAllByUserId(Integer userId);
 }
