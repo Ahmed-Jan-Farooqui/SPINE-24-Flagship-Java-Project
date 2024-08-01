@@ -9,6 +9,7 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
+  ButtonGroup,
 } from "@mui/material";
 import AddContactModal from "../AddContactModal/AddContactModal";
 import "./HomePage.css";
@@ -36,6 +37,8 @@ interface Contact {
 const HomePage = () => {
   const [openAddContactForm, setOpenAddContactForm] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [pages, setPages] = useState([""]);
+  const [currentPage, setCurrentPage] = useState(1);
   const token = localStorage.getItem("JWT");
   const id = localStorage.getItem("ID");
   console.log("Token is: ", token);
@@ -66,6 +69,13 @@ const HomePage = () => {
         };
       });
       setContacts([...contactTemp]);
+      for (
+        let i = 0;
+        i < parseInt(response.data.contacts.totalPages) - 1;
+        i++
+      ) {
+        setPages([...pages, ""]);
+      }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         if (error.request.status === 403) {
@@ -147,8 +157,8 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Contacts are: ", contacts);
-  }, [contacts]);
+    console.log("Pages: ", pages);
+  }, [pages]);
 
   return (
     <>
@@ -157,21 +167,33 @@ const HomePage = () => {
         <h2>Log Out</h2>
       </div>
       <div className="home-page-cntr">
-        <div className="contact-list-cntr"></div>
-        {contacts.map((item) => {
-          return (
-            <div className="contact-card" key={item.id}>
-              <ContactCard
-                emails={item.emails}
-                phones={item.phones}
-                firstName={item.firstName}
-                lastName={item.lastName}
-                id={item.id}
-                handleDelete={handleDelete}
-              />
-            </div>
-          );
-        })}
+        <div className="search-bar-cntr">
+          <div className="search-bar">
+            <TextField label="Search contacts" sx={{ width: 1 }} />
+          </div>
+        </div>
+        <div className="contact-list-cntr">
+          {contacts.map((item) => {
+            return (
+              <div className="contact-card" key={item.id}>
+                <ContactCard
+                  emails={item.emails}
+                  phones={item.phones}
+                  firstName={item.firstName}
+                  lastName={item.lastName}
+                  id={item.id}
+                  handleDeleteContact={handleDelete}
+                  // handleUpdate={}
+                />
+              </div>
+            );
+          })}
+          <ButtonGroup className="page-nmbr-cntr">
+            {pages.map((_, index) => {
+              return <Button variant="outlined">{index + 1}</Button>;
+            })}
+          </ButtonGroup>
+        </div>
         <Button
           variant="contained"
           className="add-contact-btn"

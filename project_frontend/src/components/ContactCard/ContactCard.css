@@ -28,6 +28,8 @@
   }
   
   .section-title {
+    display: flex;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 8px;
     color: #555; /* Darker color for section titles */
@@ -63,5 +65,10 @@
   .delete-contact-btn {
     display: block;
     margin: 0 auto;
+  }
+
+  .action-btn-cntr {
+    display: flex;
+    justify-content: space-between;
   }
   

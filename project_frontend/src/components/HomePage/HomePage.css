@@ -1,51 +1,60 @@
-/* HomePage.css */
-
 body {
-    font-family: Arial, sans-serif;
-  }
-  
+  font-family: Arial, sans-serif;
+}
+
 .header-cntr {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 20px;
-background-color: #f5f5f5;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .header-cntr h2 {
-margin: 0;
-cursor: pointer;
+  margin: 0;
+  cursor: pointer;
 }
 
 .home-page-cntr {
-padding: 0 20px;
+  padding: 0 20px;
 }
 
 .contact-list-cntr {
-margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .contact-card {
-margin-bottom: 20px;
-border-radius: 8px;
-border: 1px solid #ddd;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-background-color: #fff;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  width: 100%; 
 }
 
 .add-contact-btn {
-display: block;
-margin: 20px auto;
-background-color: #1976d2;
-color: #fff;
+  display: block;
+  margin: 20px auto;
+  background-color: #1976d2;
+  color: #fff;
 }
 
 .add-contact-btn:hover {
-background-color: #155a9e;
+  background-color: #155a9e;
 }
 
 .dialog-title {
-font-weight: bold;
+  font-weight: bold;
+}
+
+.page-nmbr-cntr {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }

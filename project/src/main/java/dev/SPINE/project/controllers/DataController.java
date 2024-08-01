@@ -21,7 +21,7 @@ public class DataController {
     @GetMapping("/user")
     public UserDTO getUser(@RequestParam Integer id,
                            @RequestParam(defaultValue = "0") Integer page,
-                           @RequestParam(defaultValue = "10") Integer size) {
+                           @RequestParam(defaultValue = "5") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         return userService.getUserById(id, pageable);
     }
@@ -30,7 +30,7 @@ public class DataController {
     public Page<Contact> getContacts(
             @RequestParam Integer id,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size){
+            @RequestParam(defaultValue = "5") Integer size){
         Pageable pageable = PageRequest.of(page, size);
         return contactService.getContacts(id, pageable);
     }
