@@ -1,0 +1,67 @@
+.contact-card-cntr {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .header-cntr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .name-cntr {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+  
+  .contact-info-cntr {
+    margin-bottom: 16px;
+  }
+  
+  .emails-cntr, .phones-cntr {
+    margin-bottom: 16px;
+  }
+  
+  .section-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555; /* Darker color for section titles */
+  }
+  
+  .email-cntr, .phone-num-cntr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  
+  .email-cntr li, .phone-num-cntr li {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .contact-info {
+    font-size: 1em;
+    color: #333; /* Primary color for emails/phones */
+  }
+  
+  .contact-label {
+    font-size: 0.9em;
+    color: #777; /* Secondary color for labels */
+    margin-top: 4px;
+  }
+  
+  .delete-btn {
+    margin-left: 8px;
+  }
+  
+  .delete-contact-btn {
+    display: block;
+    margin: 0 auto;
+  }
+  

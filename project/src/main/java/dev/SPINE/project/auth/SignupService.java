@@ -29,7 +29,7 @@ public class SignupService {
                 .build();
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
-        return AuthResponse.builder().token(jwtToken).build();
+        return AuthResponse.builder().token(jwtToken).id(user.getId()).build();
     }
 
     public AuthResponse signIn(AuthRequest authRequest) {
@@ -40,6 +40,6 @@ public class SignupService {
         System.out.println(authRequest.getEmail());
         var user = userRepository.findByEmail(authRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found!"));
         var jwtToken = jwtService.generateToken(user);
-        return AuthResponse.builder().token(jwtToken).build();
+        return AuthResponse.builder().token(jwtToken).id(user.getId()).build();
     }
 }

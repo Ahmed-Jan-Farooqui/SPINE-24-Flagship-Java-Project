@@ -8,17 +8,31 @@ import {
   TextField,
   Button,
   Grid,
+  Alert,
 } from "@mui/material";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const backend_root = "http://localhost:8080/api/v1";
 
-  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("handle login called!");
+    try {
+      let res = await axios.post(`${backend_root}/auth/login`, {
+        email: email,
+        password: password,
+      });
+      localStorage.setItem("JWT", res.data.token);
+      localStorage.setItem("ID", res.data.id);
+      navigate("/");
+    } catch (exception) {
+      console.log("Some error occurred: ", exception);
+    }
   };
 
   return (
@@ -95,7 +109,7 @@ const LoginPage = () => {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link to="/signup">{"Don't have an account? Register"}</Link>
+                <Link to={"/signup"}>{"Don't have an account? Register"}</Link>
               </Grid>
             </Grid>
           </Box>

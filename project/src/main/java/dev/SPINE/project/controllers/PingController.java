@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("api/v1/test")
 @RestController
-public class TestController {
+public class PingController {
     @GetMapping
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("Secured endpoint has been accessed.");

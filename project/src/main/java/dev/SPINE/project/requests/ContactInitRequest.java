@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactInitRequest {
-    private String userEmail;
+    private Integer id;
     private String firstName;
     private String lastName;
     private List<Email> emails;

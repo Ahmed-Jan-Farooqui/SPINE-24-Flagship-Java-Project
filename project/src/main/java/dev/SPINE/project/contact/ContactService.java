@@ -6,8 +6,12 @@ import dev.SPINE.project.requests.ContactUpdateRequest;
 import dev.SPINE.project.responses.ContactInitResponse;
 import dev.SPINE.project.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 
 @Service
@@ -18,22 +22,23 @@ public class ContactService {
     private final ContactEmailRepository contactEmailRepository;
     private final ContactPhoneRepository contactPhoneRepository;
 
+
     public ContactInitResponse save(ContactInitRequest request) {
-        var email = request.getUserEmail();
-        var user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        var id = request.getId();
+        var user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         var contact = Contact.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .user(user)
                 .build();
-        var emails = request.getEmails().stream().map((e) ->
+        var emails = request.getEmails().stream().map(e ->
                 ContactEmail
                         .builder()
                         .label(e.getLabel())
                         .contact(contact)
                         .email(e.getEmail())
                         .build()).toList();
-        var phones = request.getPhones().stream().map((p) ->
+        var phones = request.getPhones().stream().map(p ->
             ContactPhones
                     .builder()
                     .label(p.getLabel())
@@ -51,7 +56,7 @@ public class ContactService {
         try {
             contactRepository.deleteById(request.getId());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new UsernameNotFoundException("Could not find a contact with the corresponding contact ID.");
         }
         return "Contact deleted successfully.";
     }
@@ -60,53 +65,69 @@ public class ContactService {
         var contact = contactRepository.findById(request.getId())
                 .orElseThrow(() -> new UsernameNotFoundException("Contact not found"));
 
-        if (request.getFirstName() != null){
+        if (!Objects.equals(request.getFirstName(), "")){
             contact.setFirstName(request.getFirstName());
         }
 
-        if (request.getLastName() != null){
-            contact.setLastName(request.getFirstName());
+        if (!Objects.equals(request.getLastName(), "")){
+            contact.setLastName(request.getLastName());
         }
 
-        if (request.getEmail() != null){
-            var email = request.getEmail();
-            ContactEmail email_obj;
-            if (request.getEmailId() != null){
-                email_obj = contactEmailRepository.findById(request.getEmailId())
-                        .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
-                email_obj.setEmail(email.getEmail());
-                email_obj.setLabel(email.getLabel());
+        if (!request.getEmailReqs().isEmpty()){
+            var emailReqs = request.getEmailReqs();
+            for (EmailUpdate emailReq : emailReqs) {
+                ContactEmail emailObj;
+                if (Objects.equals(emailReq.getRequestType(), "update")) {
+                    emailObj = contactEmailRepository.findById(emailReq.getEmail().getId())
+                            .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+                    emailObj.setEmail(emailReq.getEmail().getEmail());
+                    emailObj.setLabel(emailReq.getEmail().getLabel());
+                    contactEmailRepository.save(emailObj);
+                } else if (Objects.equals(emailReq.getRequestType(), "add")) {
+                    emailObj = ContactEmail
+                            .builder()
+                            .email(emailReq.getEmail().getEmail())
+                            .label(emailReq.getEmail().getLabel())
+                            .contact(contact)
+                            .build();
+                    contactEmailRepository.save(emailObj);
+                } else {
+                    contactEmailRepository.deleteById(emailReq.getEmail().getId());
+                }
             }
-            else {
-                email_obj = ContactEmail
-                        .builder()
-                        .email(email.getEmail())
-                        .label(email.getLabel())
-                        .contact(contact)
-                        .build();
-            }
-            contactEmailRepository.save(email_obj);
         }
 
-        if (request.getPhone() != null) {
-            var phone = request.getPhone();
-            ContactPhones phone_obj;
-            if (request.getPhoneId() != null){
-                phone_obj = contactPhoneRepository.findById(request.getPhoneId())
-                        .orElseThrow(() -> new UsernameNotFoundException("Phone not found"));
-                phone_obj.setNumber(phone.getNumber());
-                phone_obj.setLabel(phone.getLabel());
+        if (!request.getPhoneReqs().isEmpty()) {
+            var phoneReqs = request.getPhoneReqs();
+            for (PhoneUpdate phoneReq : phoneReqs) {
+                ContactPhones phoneObj;
+                if (Objects.equals(phoneReq.getRequestType(), "update")) {
+                    phoneObj = contactPhoneRepository.findById(phoneReq.getPhone().getId())
+                            .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+                    phoneObj.setNumber(phoneReq.getPhone().getNumber());
+                    phoneObj.setLabel(phoneReq.getPhone().getLabel());
+                    contactPhoneRepository.save(phoneObj);
+                } else if (Objects.equals(phoneReq.getRequestType(), "add")) {
+                    phoneObj = ContactPhones
+                            .builder()
+                            .number(phoneReq.getPhone().getNumber())
+                            .label(phoneReq.getPhone().getLabel())
+                            .contact(contact)
+                            .build();
+                    contactPhoneRepository.save(phoneObj);
+                } else {
+                    contactPhoneRepository.deleteById(phoneReq.getPhone().getId());
+                }
             }
-            else {
-                phone_obj = ContactPhones
-                    .builder()
-                    .label(phone.getLabel())
-                    .contact(contact)
-                    .number(phone.getNumber())
-                    .build();
-            }
-            contactPhoneRepository.save(phone_obj);
         }
         return "Contact updated successfully.";
+    }
+
+    public Page<Contact> search(Integer userId, String keyword, Pageable pageable){
+        return contactRepository.findAllByKeyword(userId, keyword, pageable);
+    }
+
+    public Page<Contact> getContacts(Integer userId, Pageable pageable){
+        return contactRepository.findAllByUserId(userId, pageable);
     }
 }
