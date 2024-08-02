@@ -1,0 +1,15 @@
+.profile-page-cntr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .profile-page-cntr h2 {
+    margin-bottom: 20px;
+  }
+  
+  .profile-page-cntr button {
+    margin-bottom: 20px;
+  }
+  

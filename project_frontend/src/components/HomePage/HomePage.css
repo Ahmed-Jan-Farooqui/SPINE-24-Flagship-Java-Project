@@ -58,3 +58,19 @@ body {
   justify-content: center;
   margin-top: 20px;
 }
+
+.search-bar-cntr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  flex-grow: 1;
+  margin-right: 10px; /* Adjust this to control spacing between the search bar and the button group */
+}
+
+.search-bar .MuiTextField-root {
+  width: 100%;
+}

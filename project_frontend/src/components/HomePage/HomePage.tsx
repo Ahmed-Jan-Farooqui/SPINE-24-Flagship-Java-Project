@@ -11,9 +11,11 @@ import {
   Button,
   ButtonGroup,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import AddContactModal from "../AddContactModal/AddContactModal";
 import "./HomePage.css";
 import ContactCard from "../ContactCard/ContactCard";
+import ClearIcon from "@mui/icons-material/Clear";
 
 interface HomePageProps {
   id: number;
@@ -39,13 +41,14 @@ const HomePage = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [pages, setPages] = useState([""]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchContent, setSearchContent] = useState("");
+  const [searchView, setSearchView] = useState(false);
   const token = localStorage.getItem("JWT");
   const id = localStorage.getItem("ID");
-  console.log("Token is: ", token);
-  console.log("ID is: ", id);
+  const size = 5;
   const navigate = useNavigate();
   const backend_root = "http://localhost:8080/api/v1";
-  const fetchUserData = async () => {
+  const fetchUserData = async (page: number, size: number) => {
     // Check if token exists
     if (!token) {
       navigate("/login");
@@ -54,6 +57,8 @@ const HomePage = () => {
       let response = await axios.get(`${backend_root}/data/user`, {
         params: {
           id: id,
+          page: page,
+          size: size,
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -69,13 +74,7 @@ const HomePage = () => {
         };
       });
       setContacts([...contactTemp]);
-      for (
-        let i = 0;
-        i < parseInt(response.data.contacts.totalPages) - 1;
-        i++
-      ) {
-        setPages([...pages, ""]);
-      }
+      renderPages(parseInt(response.data.contacts.totalPages));
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         if (error.request.status === 403) {
@@ -90,6 +89,14 @@ const HomePage = () => {
         console.log("An unknown error occurred ", error);
       }
     }
+  };
+
+  const renderPages = (totalPages: number) => {
+    let pagesTemp = [""];
+    for (let i = 0; i < totalPages - 1; i++) {
+      pagesTemp.push("");
+    }
+    setPages([...pagesTemp]);
   };
 
   const addContact = () => {
@@ -113,12 +120,7 @@ const HomePage = () => {
           },
         }
       );
-      setContacts((prev) => {
-        let temp = prev.filter((item) => {
-          return item.id !== id;
-        });
-        return [...temp];
-      });
+      fetchUserData(currentPage - 1, size);
     } catch (error) {
       console.error(error);
     }
@@ -146,7 +148,7 @@ const HomePage = () => {
           },
         }
       );
-      fetchUserData();
+      fetchUserData(currentPage - 1, size);
     } catch (error) {
       console.error(error);
     }
@@ -159,24 +161,56 @@ const HomePage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      fetchUserData();
+      fetchUserData(currentPage - 1, size);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSearch = async () => {
+    try {
+      let res = await axios.get(`${backend_root}/contact/search`, {
+        params: {
+          userId: id,
+          keyword: searchContent,
+          page: 0,
+          size: size,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      let contactTemp = res.data.content.map((item: any) => {
+        return {
+          id: item.id,
+          firstName: item.firstName,
+          lastName: item.lastName,
+          emails: item.emails,
+          phones: item.phones,
+        };
+      });
+      setContacts([...contactTemp]);
+      setSearchView(true);
+      renderPages(parseInt(res.data.totalPages));
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchUserData();
+    fetchUserData(currentPage - 1, size);
   }, []);
-
-  useEffect(() => {
-    console.log("Pages: ", pages);
-  }, [pages]);
 
   return (
     <>
       <div className="header-cntr">
-        <h2>My Profile</h2>
+        <h2
+          onClick={() => {
+            navigate("/profile");
+          }}
+        >
+          My Profile
+        </h2>
         <h2
           onClick={() => {
             localStorage.removeItem("JWT");
@@ -190,8 +224,33 @@ const HomePage = () => {
       <div className="home-page-cntr">
         <div className="search-bar-cntr">
           <div className="search-bar">
-            <TextField label="Search contacts" sx={{ width: 1 }} />
+            <TextField
+              label="Search contacts"
+              value={searchContent}
+              onChange={(e) => {
+                e.preventDefault();
+                setSearchContent(e.target.value);
+              }}
+              sx={{ width: 1 }}
+            />
           </div>
+          <ButtonGroup>
+            <Button
+              variant="contained"
+              startIcon={<SearchIcon />}
+              onClick={handleSearch}
+            />
+            {searchView && (
+              <Button
+                startIcon={<ClearIcon />}
+                onClick={() => {
+                  setCurrentPage(1);
+                  fetchUserData(0, size);
+                  setSearchView(false);
+                }}
+              />
+            )}
+          </ButtonGroup>
         </div>
         <div className="contact-list-cntr">
           {contacts.map((item) => {
@@ -211,7 +270,17 @@ const HomePage = () => {
           })}
           <ButtonGroup className="page-nmbr-cntr">
             {pages.map((_, index) => {
-              return <Button variant="outlined">{index + 1}</Button>;
+              return (
+                <Button
+                  variant={currentPage - 1 === index ? "contained" : "outlined"}
+                  onClick={() => {
+                    fetchUserData(index, size);
+                    setCurrentPage(index + 1);
+                  }}
+                >
+                  {index + 1}
+                </Button>
+              );
             })}
           </ButtonGroup>
         </div>
