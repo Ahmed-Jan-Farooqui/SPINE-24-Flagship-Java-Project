@@ -152,6 +152,19 @@ const HomePage = () => {
     }
   };
 
+  const handleUpdate = async (updateReq: any) => {
+    try {
+      let res = await axios.post(`${backend_root}/contact/update`, updateReq, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchUserData();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -164,7 +177,15 @@ const HomePage = () => {
     <>
       <div className="header-cntr">
         <h2>My Profile</h2>
-        <h2>Log Out</h2>
+        <h2
+          onClick={() => {
+            localStorage.removeItem("JWT");
+            localStorage.removeItem("ID");
+            navigate("/login");
+          }}
+        >
+          Log Out
+        </h2>
       </div>
       <div className="home-page-cntr">
         <div className="search-bar-cntr">
@@ -183,7 +204,7 @@ const HomePage = () => {
                   lastName={item.lastName}
                   id={item.id}
                   handleDeleteContact={handleDelete}
-                  // handleUpdate={}
+                  handleUpdate={handleUpdate}
                 />
               </div>
             );

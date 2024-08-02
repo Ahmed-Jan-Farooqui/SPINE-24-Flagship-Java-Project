@@ -5,19 +5,25 @@ import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ButtonGroup } from "@mui/material";
+import AddPhoneModal from "../AddPhoneModal/AddPhoneModal";
+import AddEmailModal from "../AddEmailModal/AddEmailModal";
 
 interface Phone {
-  id: number;
-  number: string;
-  label: string;
+  phone: {
+    id: number;
+    number: string;
+    label: string;
+  };
   requestType: "add" | "update" | "delete";
 }
 interface Email {
-  id: number;
-  email: string;
-  label: string;
+  email: {
+    id: number;
+    email: string;
+    label: string;
+  };
   requestType: "add" | "update" | "delete";
 }
 
@@ -25,8 +31,8 @@ interface UpdateRequest {
   id: number;
   firstName: String;
   lastName: String;
-  email?: Email[];
-  phone?: Phone[];
+  phoneReqs?: Phone[];
+  emailReqs?: Email[];
 }
 
 export default function ContactCard({
@@ -41,8 +47,10 @@ export default function ContactCard({
   const [editMode, setEditMode] = useState(false);
   const [localPhones, setLocalPhones] = useState([...phones]);
   const [localEmails, setLocalEmails] = useState([...emails]);
-  const [emailChanges, setEmailChanges] = useState<{}[]>([]);
-  const [phoneChanges, setPhoneChanges] = useState<{}[]>([]);
+  const [emailChanges, setEmailChanges] = useState<Email[]>([]);
+  const [phoneChanges, setPhoneChanges] = useState<Phone[]>([]);
+  const [openAddPhone, setOpenAddPhone] = useState(false);
+  const [openAddEmail, setOpenAddEmail] = useState(false);
 
   const deleteContact = () => {
     handleDeleteContact(id);
@@ -55,12 +63,24 @@ export default function ContactCard({
     requestType: "add" | "delete" | "update"
   ) => {
     let emailObj: Email = {
-      id: id,
-      email: email,
-      label: label,
+      email: {
+        id: id,
+        email: email,
+        label: label,
+      },
       requestType: requestType,
     };
     setEmailChanges([...emailChanges, emailObj]);
+    if (requestType === "add") {
+      setLocalEmails([
+        ...localEmails,
+        {
+          id: id,
+          email: email,
+          label: label,
+        },
+      ]);
+    }
   };
 
   const handlePhoneUpdate = (
@@ -70,13 +90,61 @@ export default function ContactCard({
     requestType: "add" | "delete" | "update"
   ) => {
     let phoneObj: Phone = {
-      id: id,
-      number: number,
-      label: label,
+      phone: {
+        id: id,
+        number: number,
+        label: label,
+      },
       requestType: requestType,
     };
     setPhoneChanges([...phoneChanges, phoneObj]);
+    if (requestType === "add") {
+      setLocalPhones([
+        ...localPhones,
+        {
+          id: id,
+          number: number,
+          label: label,
+        },
+      ]);
+    }
   };
+
+  const addPhone = () => {
+    setOpenAddPhone(true);
+  };
+  const closePhone = () => {
+    setOpenAddPhone(false);
+  };
+
+  const addEmail = () => {
+    setOpenAddEmail(true);
+  };
+  const closeEmail = () => {
+    setOpenAddEmail(false);
+  };
+
+  const restoreContact = () => {
+    setLocalEmails([...emails]);
+    setLocalPhones([...phones]);
+    setEditMode(false);
+  };
+
+  const updateContact = () => {
+    const updateReq: UpdateRequest = {
+      id: id,
+      firstName: "",
+      lastName: "",
+      emailReqs: [...emailChanges],
+      phoneReqs: [...phoneChanges],
+    };
+    handleUpdate(updateReq);
+    setEditMode(false);
+  };
+
+  useEffect(() => {
+    restoreContact();
+  }, []);
 
   return (
     <div className="contact-card-cntr">
@@ -98,10 +166,10 @@ export default function ContactCard({
         <div className="emails-cntr">
           <div className="section-title">
             Emails:
-            {editMode && <Button startIcon={<AddIcon />} />}
+            {editMode && <Button startIcon={<AddIcon />} onClick={addEmail} />}
           </div>
           <ol>
-            {emails.map((item: any) => {
+            {localEmails.map((item: any) => {
               return (
                 <div className="email-cntr" key={item.email}>
                   <li>
@@ -119,6 +187,12 @@ export default function ContactCard({
                           item.label,
                           "delete"
                         );
+                        setLocalEmails((prev) => {
+                          let newEmails = prev.filter((email) => {
+                            return email.id !== item.id;
+                          });
+                          return newEmails;
+                        });
                       }}
                       className="delete-btn"
                     ></Button>
@@ -131,10 +205,10 @@ export default function ContactCard({
         <div className="phones-cntr">
           <div className="section-title">
             Phones:
-            {editMode && <Button startIcon={<AddIcon />} />}
+            {editMode && <Button startIcon={<AddIcon />} onClick={addPhone} />}
           </div>
           <ol>
-            {phones.map((item: any) => {
+            {localPhones.map((item: any) => {
               return (
                 <div className="phone-num-cntr" key={item.number}>
                   <li>
@@ -152,6 +226,12 @@ export default function ContactCard({
                           item.label,
                           "delete"
                         );
+                        setLocalPhones((prev) => {
+                          let newPhones = prev.filter((phone) => {
+                            return phone.id !== item.id;
+                          });
+                          return newPhones;
+                        });
                       }}
                       className="delete-btn"
                     ></Button>
@@ -177,15 +257,27 @@ export default function ContactCard({
               variant="contained"
               startIcon={<CheckIcon />}
               className="confirm-btn"
+              onClick={updateContact}
             />
             <Button
               variant="outlined"
               startIcon={<ClearIcon />}
               className="confirm-btn"
+              onClick={restoreContact}
             />
           </ButtonGroup>
         )}
       </div>
+      <AddPhoneModal
+        open={openAddPhone}
+        handleAdd={handlePhoneUpdate}
+        handleClose={closePhone}
+      />
+      <AddEmailModal
+        open={openAddEmail}
+        handleAdd={handleEmailUpdate}
+        handleClose={closeEmail}
+      />
     </div>
   );
 }
